@@ -30,7 +30,7 @@ export function validatePass(value){
 /**
  * 验证验证码
  */
-export function validateCode(value){
+export function validateVCode(value){
     let reg = /^[a-z0-9]{6}$/;
     return !reg.test(value) ? true : false ;
 }

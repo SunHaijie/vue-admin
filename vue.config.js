@@ -1,7 +1,7 @@
 const path = require('path');
 module.exports = {
     //基本路径
-    publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
+    publicPath: process.env.NODE_ENV === 'production' ? '' : './',
     //输出文件目录
     outputDir: process.env.NODE_ENV === 'production' ? 'dist' : 'devdist',
     //eslint-loader 是否在保存的时候检查
@@ -10,19 +10,23 @@ module.exports = {
      * webpack配置，see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
      **/
     chainWebpack: (config) => {
-
+        const svgRule = config.module.rule("svg");
+        svgRule.uses.clear();
+        svgRule
+        .use("svg-sprite-loader")
+        .loader("svg-sprite-loader")
+        .options({
+            symbolId: "icon-[name]",
+            include: ["./src/icons"]
+        });
     },
     configureWebpack: (config) => {
         config.resolve = {    //配置解析别名
             extensions: ['.js','.json','.vue'], //  自动添加文件名后缀
             alias: {
+            'vue': 'vue/dist/vue.js',
             '@': path.resolve(__dirname,'./src'),
-            '@c': path.resolve(__dirname,'./src/componts'),
-            // 'public': path.resolve(__dirname,'./public'),
-            // 'common': path.resolve(__dirname,'./src/common'),
-            // 'api': path.resolve(__dirname,'./src/api'),
-            // 'views':path.resolve(__dirname,'./src/views'),
-            // 'data': path.resolve(__dirname,'./src/data')
+            '@c': path.resolve(__dirname,'./src/components')
         }
         }
     },
@@ -41,7 +45,7 @@ module.exports = {
             }
         },
         //启用 CSS modules for all css / pre-processor files.
-        requireModuleExtension: false
+        // modules: false
     },
     //use thread-loader for babel & TS in production build
     //enabled by default if the machine has more than 1 cores
@@ -58,13 +62,18 @@ module.exports = {
         https: false,   //编译失败时刷新页面
         hot: true,  //开启热加载
         hotOnly: false,
-        proxy: null,    //设置代理
-        overlay: {  //全屏模式下是否显示脚本错误
-            warnings: true,
-            errors: true
-        },
-        before: app => {
-
+        //设置代理
+        // 'proxy' 定义代理服务器的主机名称和端口
+        // `auth` 表示 HTTP 基础验证应当用于连接代理，并提供凭据
+        // 这将会设置一个 `Proxy-Authorization` 头，覆写掉已有的通过使用 `header` 设置的自定义 `Proxy-Authorization` 头。
+        proxy: {
+            '/devApi;': {
+                target: 'http://www.web-jshtml.cn/productapi/token',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/devApi;':''
+                }
+            }
         }
     },
     /**
