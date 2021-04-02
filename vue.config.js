@@ -67,11 +67,11 @@ module.exports = {
         // `auth` 表示 HTTP 基础验证应当用于连接代理，并提供凭据
         // 这将会设置一个 `Proxy-Authorization` 头，覆写掉已有的通过使用 `header` 设置的自定义 `Proxy-Authorization` 头。
         proxy: {
-            '/devApi;': {
+            '/devApi': {
                 target: 'http://www.web-jshtml.cn/productapi/token',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/devApi;':''
+                    '^/devApi':''
                 }
             }
         }
